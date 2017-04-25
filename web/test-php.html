@@ -1,0 +1,44 @@
+<html><div id="attributes" class="attributes">
+
+
+		<ul class="attributes-list">
+							    <li title="&nbsp;37*18*1.3">尺寸:&nbsp;37*18*1.3</li><li title="&nbsp;木">砧板材质:&nbsp;木</li><li title="&nbsp;单只装">包装:&nbsp;单只装</li>                </ul>
+
+    
+
+</div>
+<script>
+KISSY.use("dom",function(a){setTimeout(function(){try{var b=a.DOM,k=function(e){return e?e.top:0},j=k(b.offset("#J_juValid a.J_LinkBuy")),f=k(b.offset("#attributes")),l=k(b.offset("#description")),g=b.height("#detail"),i=b.viewportHeight(),d={type:3,buy:j,attr:f,desc:l,det:g,view:i,cc:j+f+l+g+i,t:a.now()},c=b.attr(document.body,"class").match(/active-tab-index-(\d)/g)[0];if(c&&c.substring(c.length-1)==="0"&&Math.floor(Math.random()*10)===0){new Image().src="http://log.mmstat.com/tbdetail.24253?"+a.param(d)}}catch(h){}},10000)});
+</script>
+
+<body>
+
+<?php
+if (isset($_REQUEST['email']))
+//if "email" is filled out, send email
+  {
+  //send email
+  $email = $_REQUEST['email'] ; 
+  $subject = $_REQUEST['subject'] ;
+  $message = $_REQUEST['message'] ;
+  mail( "someone@example.com", "Subject: $subject",
+  $message, "From: $email" );
+  echo "Thank you for using our mail form";
+  }
+else
+//if "email" is not filled out, display the form
+  {
+  echo "<form method='post' action='mailform.php'>
+  Email: <input name='email' type='text' /><br />
+  Subject: <input name='subject' type='text' /><br />
+  Message:<br />
+  <textarea name='message' rows='15' cols='40'>
+  </textarea><br />
+  <input type='submit' />
+  </form>";
+  }
+?>
+
+</body>
+</html>
+
