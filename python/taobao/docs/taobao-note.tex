@@ -1,0 +1,89 @@
+isql ..\examples\empbuild\EMPLOYEE.FDB -u sysdba -p masterkey -ch gbk
+isql F:\taobao\APPTRADE.DAT -u sysdba -p masterkey -ch gbk
+
+isql F:\taobao\APPITEM.DAT -u sysdba -p masterkey -ch GBK
+select TITLE from ITEM;   //标题
+select DESCRIPTION from ITEM; //商品描述
+
+sudo isql-fb APPITEM.DAT -u sysdba -p masterkey -ch GBK
+
+
+python C:\CRMApps\apps\Python262\Lib\sgmllib.py html\17014360433.html
+
+sudo dpkg-reconfigure firebird2.5-superclassic
+:au BufWritePre * let &bex = '-' . strftime("%Y%b%d%X") . '~'
+
+kinterbasdb.ProgrammingError: (0L, "Attempt to fetch row of results after statement that does not produce result set.  That statement was:  update ITEM set MODIFIED='2013-09-29 13:24:24' where NUM_IID=5211589044")
+http.request.uri   http://suggest.taobao.com/sug?code=utf-8&q=zakk&_ksTS=1381884049547_2897&callback=jsonp2898&k=1&area=c2c&bucketid=10
+ http://suggest.taobao.com/sug?code=utf-8&q=zakka&_ksTS=1381884049547_2897&k=1&area=c2c&bucketid=20
+{"result": [["zakka杂货", "2160856"], ["zakka收纳", "46191"], ["zakka杯子", "31145"], ["zakka花盆", "8847"], ["zakka木", "41339"], ["zakka杯", "41097"], ["zakka杂货仰望天空", "1295"], ["zakka复古", "64483"], ["zakka收纳柜", "5737"], ["zakka摆件", "218638"]],magic:[{index:1,list:["摆件","动物","道具","创意","复古","铁质","可爱","做旧","简约现代","植物"]},{index:2,list:["柜","盒","桶","复古","桌面","实木","铁盒","化妆品","棉麻","木质"]},{index:3,list:["创意","马克杯","可爱","陶瓷","复古","杂货","情侣","带盖","田园风格","刻花"]},{index:4,list:["陶瓷","现代简约","白色","迷你","复古","日式","垂吊","花桶","壁挂","红陶"]},{index:9,list:["复古","杂货","做旧","实木","抽屉","木质","桌面","家居","创意","化妆品"]},{index:10,list:["树脂","家居","装饰","创意","工艺品","仰望","简约现代","植物","模型","姻缘"]}]} 
+
+http://suggest.taobao.com/sug?code=utf-8&q=zakka&_ksTS=1381884049547_2897&k=1&area=c2c&bucketid=20
+
+{"result": [["zakka杂货","74089"], ["zakka 收纳","50507"], ["zakka 杯子","21788"], ["zakka 收纳柜","6164"], ["zakka 摆件","27366"], ["zakka 花盆","9380"], ["zakka 杂货批发","1812"], ["zakka 木盒","900696"], ["zakka 窗帘","939"], ["zakka 花架","626"]]} 
+http://suggest.taobao.com/sug?code=utf-8&q=zakka
+
+淘宝数据挖掘利器—淘宝指数震撼上线
+http://www.laokboke.net/2012/04/19/taobao-zhishu/
+
+淘宝指数（http://shu.taobao.com/）
+
+
+初步认识Firebird的Classic,superserver和embeded server
+Firebird数据库分为Classic Server和Superserver两种体系
+这两种体系的区别： 
+
+--------------------------------------------------------------------------------
+
+a,进程上：
+   Classic Server为每个连接都创建一个独立的进程，都有自己独立的内存空间，越少的连接就占用越少的资源。
+    Superserver是所有的连接都在一个进程中，用多线程的提交处理，并且共享内存空间，当有多个并发连接的时候可以有更好的效果b,本地连接：
+     在Windows上，两个体系都支持安全和可靠的本地连接，就只有服务进程需要权限去访问数据库
+c,多处理器：
+     Classic Server支持多处理器,在有很多连接的时候有更好性能，而且相互之间没有影响Superserver不支持，并且如果在多线程的机器上运行，性能可能降低，如果你的机器是多处理器的，那么未了防止这种情况的出现，需要去修改firebird.conf的cpuaffinityMask参数.
+d,监视程序:
+     Classic Server: 当firebird作为应用程序运行的时候，这个监护程序不能运行，注意：只要在Windows 
+9x-ME下，才能将firebird做为应用程序来运行
+     Superserver:  在firebird作为应用程序或服务的时候都可以运行这个监护程序这两种体系模式，在提供的功能上是没有区别的，都是相同的。
+一般下的选择：
+在windows选择Superserver,
+在Linux上两者都可以，因为在大多数情况下，你可能不太会去注意性能上的不同。
+
+嵌入式服务(embedded server) 
+
+
+--------------------------------------------------------------------------------
+
+     它是将superserver引型和客户端融合到一个库（fbembed.dll）中，对它的安装是将一些DLL和其他文件放制到任意的目录中，这种模式下数据库的安全性降低了，因为任何人都可以连接到数据库，并且只要拥有文件权限的用户都有权限访问数据库。
+在同一时间，你可以有多个嵌入式服务一起运行，并且还可以有多个应用程序连接到同一个服务。可是有个情况，当一个嵌入式服务成功连接数据库后，它会一直独占。也就是其他的潜入式服务不能对这个数据库进行访问。
+它只支持本地的连接，而且在连接字符串中都不能包含host 
+name(例如:localhost),这种模式下就根本不是客户-服务器这种类型的数据库，只是一个桌面形式的数据库.
+ 
+
+
+嵌入式服务的部署
+     先从SourceForge上把它下载下来，它是一个叫"Firebird-n.n.n.xxxx_embed_win32.zip"的文件.
+下载完后，进行解压缩，可以发现在根目录下有个fbembed.dll的文件,还有其他文件
+
+
+让应用程序在这个服务上工作
+1,拷贝fbembed.dll到你的应用程序目录，拷贝完后你可以对这个DLL重新命名（你喜欢的名字）。firebird的命令行工具isq和gbak，也可以在embedded 
+server上运行
+2,还需要将firebird.msg和ib_util.dll这两个文件拷贝到应用程序目录，如果你的应用程序要通过aliases去连接的话，你就必须拷贝aliases.conf，还有如果你希望去修改firebird配置的话，就去拷贝firebird.conf.
+3,当是Firebird 
+2.0或者更高的版本，还需要拷贝icu*.dll库
+4,在应用程序目录中，必须要有intl和udf这两个文件夹.
+5,配置完上面后就可以用embedded 
+server 
+DLL去连接本地的firebird数据库了。只要当前用户有文件访问权限就可以了，数据库连接根本不需要去设置任何的用户名和密码。
+
+
+     Firebird的有些文件也可以放在其他地方,例如firebird.msg,aliases.conf,intl和udf目录中内容，这些可以放在其他地方，但是如果放在其他地方需要对firebird.conf中RootDirectory的参数进行修改。
+
+
+     这种方式的最大好处就是易与部署和安装，而且你可以同时拥有多个版本的embedded 
+server在同一台机器上运行。
+安全资料档案security.fdb没有被使用，不需要它，但是SQL执行权限任会被检查。
+
+
+
