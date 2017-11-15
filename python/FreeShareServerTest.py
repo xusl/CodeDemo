@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import fnmatch
 import hashlib
 import json
 import math
@@ -33,6 +34,8 @@ port = sys.argv[2] if len(sys.argv) > 2 else '8087'
 baseUrl = "http://%s:%s/" % (server, port)
 clientName = "TestPython"
 clientId = hashlib.md5("Nobody inspects the spammish repetition").hexdigest()
+imei = u'708784188888888'
+mac = u'cb1d622f-03c0-4a59-9cec-7cff3dfd8724'
 timeout = 120
 chunk_size = 8192
 '''
@@ -51,6 +54,42 @@ def start_line(text):
 def stop_line():
     print "-" * 78, '\n'
 
+
+def find(pattern, path):
+    result = []
+    for root, dirs, files in os.walk(path):
+        for name in files:
+            if fnmatch.fnmatch(name, pattern):
+                result.append(os.path.join(root, name))
+    return result
+
+
+def upload_file(file_path, upload_url):
+    metadata = {u'size': os.path.getsize(file_path),
+                u'index': 0,
+                u'name': os.path.basename(file_path),
+                u'packageName': u'',
+                u'isActived': False,
+                u'iconUrl': u'5.7.0.8',
+                u'mac': mac,
+                u'version': 5708,
+                u'isGrp': False,
+                u'coin': 0,
+                u'type': 6,
+                u'senderIMEI': imei}
+    file_data = {'upload_file': (os.path.basename(file_path), open(file_path, 'rb'), 'text/plain'),
+                 # 'file_metadata': (os.path.basename(file_path), open(file_path, 'rb'), 'application/json')
+                 }
+
+    upload_response = requests.post(upload_url,
+                      data={'file_metadata': json.dumps(metadata)},
+                      files=file_data,
+                      timeout=timeout)
+
+    # print upload_response.status_code
+    # print upload_response.headers['content-type']
+    # print upload_response.headers
+    print upload_response.content
 
 start_line("Test register")
 r = requests.get(baseUrl + "register/", params={"name": clientName, "id": clientId}, timeout=timeout)
@@ -90,36 +129,11 @@ print r.json()
 stop_line()
 
 start_line("Test upload file API")
+upload_url = baseUrl + "put_file/" + "?" + urllib.urlencode(params)
+upload_file(sys.argv[0], upload_url)
+for share_file in find("*.png", "."):
+    upload_file(share_file, upload_url)
 
-file_path = sys.argv[0]
-imei = u'708784188888888'
-mac = u'cb1d622f-03c0-4a59-9cec-7cff3dfd8724'
-metadata = {u'size': os.path.getsize(file_path),
-            u'index': 0,
-            u'name': os.path.basename(file_path),
-            u'packageName': u'',
-            u'isActived': False,
-            u'iconUrl': u'5.7.0.8',
-            u'mac': mac,
-            u'version': 5708,
-            u'isGrp': False,
-            u'coin': 0,
-            u'type': 6,
-            u'senderIMEI': imei}
-file_data = {'upload_file': (os.path.basename(file_path), open(file_path, 'rb'), 'text/plain'),
-             # 'file_metadata': (os.path.basename(file_path), open(file_path, 'rb'), 'application/json')
-             }
-upload_params = dict(params)
-# upload_params["file_metadata"] = json.dumps(metadata)
-
-r = requests.post(baseUrl + "put_file/" + "?" + urllib.urlencode(params),
-                  data={'file_metadata': json.dumps(metadata)},
-                  files=file_data,
-                  timeout=timeout)
-print r.status_code
-print r.headers['content-type']
-print r.headers
-print r.content
 stop_line()
 
 # start_line("Test exit API")
