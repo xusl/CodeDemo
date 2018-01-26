@@ -50,32 +50,38 @@ import base64
 '''
 sha1 file with filename (SHA1)
 '''
+
+
 def SHA1FileWithName(fineName, block_size=64 * 1024):
-  with open(fineName, 'rb') as f:
-    sha1 = hashlib.sha1()
-    while True:
-      data = f.read(block_size)
-      if not data:
-        break
-      sha1.update(data)
-    return sha1.hexdigest()
-    # retsha1 = base64.b64encode(sha1.digest())
-    # return retsha1
+    with open(fineName, 'rb') as f:
+        sha1 = hashlib.sha1()
+        while True:
+            data = f.read(block_size)
+            if not data:
+                break
+            sha1.update(data)
+        return sha1.hexdigest()
+        # retsha1 = base64.b64encode(sha1.digest())
+        # return retsha1
+
 
 '''
 md5 file with filename (MD5)
 '''
+
+
 def MD5FileWithName(fineName, block_size=64 * 1024):
-  with open(fineName, 'rb') as f:
-    md5 = hashlib.md5()
-    while True:
-      data = f.read(block_size)
-      if not data:
-        break
-      md5.update(data)
-    return md5.digest()
-    # retmd5 = base64.b64encode(md5.digest())
-    # return retmd5
+    with open(fineName, 'rb') as f:
+        md5 = hashlib.md5()
+        while True:
+            data = f.read(block_size)
+            if not data:
+                break
+            md5.update(data)
+        return md5.digest()
+        # retmd5 = base64.b64encode(md5.digest())
+        # return retmd5
+
 
 def start_line(text):
     begin = int(math.floor((78 - len(text)) / 2))
@@ -95,10 +101,6 @@ def find(pattern, path):
                 result.append(os.path.join(root, name))
     return result
 
-for share_file in find("*.png", "."):
-    print share_file, SHA1FileWithName(share_file)
-
-exit(0)
 
 def upload_file(file_path, upload_url):
     metadata = {u'size': os.path.getsize(file_path),
@@ -112,20 +114,22 @@ def upload_file(file_path, upload_url):
                 u'isGrp': False,
                 u'coin': 0,
                 u'type': 6,
-                u'senderIMEI': imei}
+                u'senderIMEI': imei,
+                u'itemID': SHA1FileWithName(file_path)}
     file_data = {'upload_file': (os.path.basename(file_path), open(file_path, 'rb'), 'text/plain'),
                  # 'file_metadata': (os.path.basename(file_path), open(file_path, 'rb'), 'application/json')
                  }
 
     upload_response = requests.post(upload_url,
-                      data={'file_metadata': json.dumps(metadata)},
-                      files=file_data,
-                      timeout=timeout)
+                                    data={'file_metadata': json.dumps(metadata)},
+                                    files=file_data,
+                                    timeout=timeout)
 
     # print upload_response.status_code
     # print upload_response.headers['content-type']
     # print upload_response.headers
     print upload_response.content
+
 
 start_line("Test register")
 r = requests.get(baseUrl + "register/", params={"name": clientName, "id": clientId}, timeout=timeout)
@@ -159,10 +163,9 @@ for item in r.json():
             # print r.json()
 stop_line()
 
-
 start_line("Test completed file download")
 r = requests.get(baseUrl + "completed/", params=params, timeout=timeout)
-print r.content#, r.text
+print r.content  # , r.text
 stop_line()
 
 start_line("Test request get group")
@@ -178,7 +181,6 @@ for share_file in find("*.png", "."):
 
 stop_line()
 
-
 start_line("Test exit API")
 r = requests.get(baseUrl + "share_exit/", params=params, timeout=timeout)
-print r.content#, r.text
+print r.content  # , r.text
